@@ -45,6 +45,7 @@ const int POT_A2 = A2;
 const int PHOTO_RESISTOR_A3 = A3;
 
 int overridePhysicalControls = 0;
+int syncFromSteptracker = 0;
 
 // Servo declaration
 Servo myservo;
@@ -148,7 +149,7 @@ int bleWriteCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size) {
       Serial.println("Receiving data from android for physical control override");
       overridePhysicalControls = receive_data[1];
     }
-    else if (receive_data[0] == 0x07)
+    else if (receive_data[0] == 0x07 and syncFromSteptracker == 1)
     {
       Serial.println("Receiving data from Step tracker");
       bool isStepIncremented = receive_data[1];
@@ -162,6 +163,10 @@ int bleWriteCallback(uint16_t value_handle, uint8_t *buffer, uint16_t size) {
         // set the LED to red color
         setColor(calculateLedBrightnessFromPhotoCell(),0,0);
       }
+    }
+    else if (receive_data[0] == 0x08)
+    {
+      syncFromSteptracker = receive_data[1];
     }
   }
   return 0;
